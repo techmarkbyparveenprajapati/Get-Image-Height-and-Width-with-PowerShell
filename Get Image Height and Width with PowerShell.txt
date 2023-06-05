@@ -1,0 +1,17 @@
+$folder = "YOUR_FOLDER_PATH_HERE"
+$app = New-object -ComObject 'Shell.application'
+$foldernamespace = $app.NameSpace($folder)
+
+Get-childitem -Path "$folder\*" -include '*.jpg','*.png' -File |
+ForEach-Object {
+$image = $foldernamespace.parsename($_.Name)
+
+if($foldernamespace.GetDetailsof($image, 31) -match '(?<width>\d+) x (?<height>\d+)'){
+[PsCustomObject]@{
+ImageName = $_.FullName
+Width = $Matches.width
+Height = $Matches.height
+
+}
+}
+} | Export-csv C:\Users\User\Desktop\JPGCON\dim.csv
